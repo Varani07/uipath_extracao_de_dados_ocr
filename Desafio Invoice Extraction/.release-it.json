@@ -1,0 +1,81 @@
+{
+  "git": {
+    "changelog": "git log --pretty=format:\"* %s (%h)\" ${from}...${to}",
+    "requireCleanWorkingDir": true,
+    "requireBranch": false,
+    "requireUpstream": false,
+    "requireCommits": false,
+    "requireCommitsFail": true,
+    "commitsPath": "",
+    "addUntrackedFiles": false,
+    "commit": false,
+    "commitMessage": "Release ${version}",
+    "commitArgs": [],
+    "tag": true,
+    "tagExclude": null,
+    "tagName": null,
+    "tagMatch": null,
+    "getLatestTagFromAllRefs": true,
+    "tagAnnotation": "Release ${version}",
+    "tagArgs": [],
+    "push": true,
+    "pushArgs": ["--follow-tags"],
+    "pushRepo": ""
+  },
+  "github": {
+    "release": false
+  },
+  "gitlab": {
+    "release": false
+  },
+  "npm": {
+    "publish": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog\n\nAll notable changes to this project will be documented in this file. See:\n- [@release-it/conventional-changelog](https://www.npmjs.com/package/@release-it/conventional-changelog)\n- [release-it](https://www.npmjs.com/package/release-it)",
+      "preset": {
+        "name": "conventionalcommits",
+        "issueUrlFormat": "{{host}}/digital-office/rpa/_workitems/edit/{{id}}/",
+        "compareUrlFormat": "{{host}}/digital-office/rpa/_git/{{mudar-para-nome-do-repositorio}}/branchCompare?baseVersion=GT{{previousTag}}&targetVersion=GT{{currentTag}}",
+        "commitUrlFormat": "{{host}}/digital-office/rpa/_git/{{mudar-para-nome-do-repositorio}}/commit/{{hash}}",
+        "types": [
+          {
+            "type": "build",
+            "section": "Other"
+          },
+          {
+            "type": "docs",
+            "section": "Docs"
+          },
+          {
+            "type": "feat",
+            "section": "Features"
+          },
+          {
+            "type": "fix",
+            "section": "Bug Fixes"
+          },
+          {
+            "type": "perf",
+            "section": "Other"
+          },
+          {
+            "type": "style",
+            "section": "Other"
+          },
+          {
+            "type": "refactor",
+            "section": "Other"
+          },
+          {
+            "type": "test",
+            "section": "Other"
+          },
+          {}
+        ]
+      }
+    }
+  }
+}

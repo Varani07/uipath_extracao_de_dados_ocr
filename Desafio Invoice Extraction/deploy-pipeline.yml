@@ -1,0 +1,76 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - main
+    - release
+  paths:
+    exclude:
+    - 'CHANGELOG.md'
+    - 'deploy-pipeline.yml'
+    - '.release-it.json'
+    - 'README.md'
+
+parameters:
+  - name: releaseItArg
+    type: string
+    default: 'null'
+    values:
+      - 'null'
+      - '--no-increment'
+      - 'major'
+      - 'minor'
+      - 'patch'
+      - '--preRelease'
+      - 'premajor'
+      - 'preminor'
+      - 'prepatch'  
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: DevSecOps/pipeline-templates
+      ref: refs/tags/v3.9.3
+    - repository: templates-rpa
+      type: git
+      name: RPA/pipeline-templates
+    - repository: stage
+      type: git
+      name: RPA/pipeline-templates
+
+  containers:
+    - container: semantic-versioning
+      image: rdnprdusdevopsacr01.azurecr.io/ci/semantic-versioning:latest
+      endpoint: rdn-prd-us-devops-acr-01-pull-srvcon-01
+    - container: ubuntu
+      image: rdnprdusdevopsacr01.azurecr.io/ci/ubuntu:7.0
+      endpoint: rdn-prd-us-devops-acr-01-pull-srvcon-01 
+
+variables:
+  - group: base-ci-cd
+  - group: base-orchestrator
+  
+pool:
+  name: $(CUSTOM_AGENT_POOL_NAME)
+
+
+stages:
+  - template: templates/stages/deploy-rpa.yml@stage
+    parameters:
+      ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+        orchestratorConnection: $(ORCHESTRATOR_CONNECTION_PRD)
+        folderName: $(FOLDER_NAME_PRD)
+        tenancyName: $(TENANCY_NAME_PRD)
+        organizationUnitId: $(ORGANIZATION_UNIT_ID_PRD)
+      ${{ else }}:
+        orchestratorConnection: $(ORCHESTRATOR_CONNECTION_QAS)
+        folderName: $(FOLDER_NAME_QAS)
+        tenancyName: $(TENANCY_NAME_QAS)
+        organizationUnitId: $(ORGANIZATION_UNIT_ID_QAS)
+      processKey: $(Build.Repository.Name)
+      releaseItArg: ${{ parameters.releaseItArg }}
